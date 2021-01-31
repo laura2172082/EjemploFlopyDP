@@ -69,10 +69,12 @@ ic = flopy.mf6.ModflowGwfic(gwf, pname="ic", strt=start)  #condiciones iniciales
 # npf not property flow 
 #entonces en esos parentesis (gwf ya definido antes,icelltype=1 significa que el tipo de celda es para calcular el espesor de la celda ,1 espesor de la celda )
 #k si es un valor pero se le podria meter una matriz 
-#
 npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
 
-# 
+# para poner la condicion de frontera 
+#linea 1 esta creando una lista vacia y añade dentro de la lista una tupla con coordenadas:
+# donde es capa,fila columna,osea en la capa 0 ,int lo convierte en entero la fila,y columna 12 y el valor despues es h2 el valor de la capa hidraulica 
+#entonces chd tiene la coordenada y la carga y con un bucle FOR y un if ,esta recorriendo las celdas de los bordes 
 chd_rec = []
 chd_rec.append(((0, int(N / 4), int(N / 4)), h2))
 for layer in range(0, Nlay):
@@ -94,8 +96,9 @@ iper = 0
 ra = chd.stress_period_data.get_data(key=iper)
 ra
 
-#
+
 # Create the output control (`OC`) Package
+#me va a decir que imprimir en la salida 
 headfile = "{}.hds".format(name)
 head_filerecord = [headfile]
 budgetfile = "{}.cbb".format(name)
@@ -112,7 +115,7 @@ oc = flopy.mf6.ModflowGwfoc(
 #construya los txt 
 sim.write_simulation()
 
-#condicion de exito 
+#condicion de exito  y corre el software 
 success, buff = sim.run_simulation()
 if not success:
     raise Exception("MODFLOW 6 did not terminate normally.")
@@ -128,7 +131,8 @@ ax = fig.add_subplot(1, 1, 1, aspect="equal")
 c = ax.contour(x, y, h[0], np.arange(90, 100.1, 0.2), colors="black")
 plt.clabel(c, fmt="%2.1f")
 
-#plot layer 10
+#ya complete el modelo,pero ahora vamos a crear graficas 
+#es para plotearotra capa,si se mira es lo mismo que la anterior pero cambia en h0 la primera capa y h-1 la ultima capa 
 x = y = np.linspace(0, L, N)
 y = y[::-1]
 fig = plt.figure(figsize=(6, 6))
