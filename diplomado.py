@@ -79,6 +79,7 @@ npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
 #entonces chd tiene la coordenada y la carga y con un bucle FOR y un if ,esta recorriendo las celdas de los bordes 
 chd_rec = []
 chd_rec.append(((0, int(N / 4), int(N / 4)), h2))
+chd_rec.append(((1, int(3*N / 4), int(3*N / 4)), h2-5))
 for layer in range(0, Nlay):
     for row_col in range(0, N):
         chd_rec.append(((layer, row_col, 0), h1))
@@ -86,7 +87,7 @@ for layer in range(0, Nlay):
         if row_col != 0 and row_col != N - 1:
             chd_rec.append(((layer, 0, row_col), h1))
             chd_rec.append(((layer, N - 1, row_col), h1))
-chd = flopy.mf6.ModflowGwfchd(
+chd = flopy.mf6.ModflowGwfchd( 
     gwf,
     maxbound=len(chd_rec),
     stress_period_data=chd_rec,
