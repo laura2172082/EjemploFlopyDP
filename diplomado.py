@@ -69,6 +69,8 @@ ic = flopy.mf6.ModflowGwfic(gwf, pname="ic", strt=start)  #condiciones iniciales
 # npf not property flow 
 #entonces en esos parentesis (gwf ya definido antes,icelltype=1 significa que el tipo de celda es para calcular el espesor de la celda ,1 espesor de la celda )
 #k si es un valor pero se le podria meter una matriz 
+k=np.ones([10,N,N])
+k[1,:,:]=5e-3
 npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
 
 # para poner la condicion de frontera 
