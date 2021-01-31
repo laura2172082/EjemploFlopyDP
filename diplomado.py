@@ -2,7 +2,14 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import flopy
-
+#vamos a empezar hacer el modelo,este modelo tiene unas caracteristicas particulares y estan ahi expuestas al comienzo 
+# name es el nombre del modelo 
+#h1 y h2 son las cargas hidraulicas en los bordes
+#Nlay es el numero de capas,por lo tanto este modelo tiene 10 capas por que Nlay=10
+#N es el numero de celdas ,osea son 100 celdas 
+#L son las dimensiones del modelo 
+#H es la altura del modelo 
+#k es la permeabilidad 
 name = "ejercicio "
 h1 = 100
 h2 = 90
