@@ -70,7 +70,7 @@ ic = flopy.mf6.ModflowGwfic(gwf, pname="ic", strt=start)  #condiciones iniciales
 #entonces en esos parentesis (gwf ya definido antes,icelltype=1 significa que el tipo de celda es para calcular el espesor de la celda ,1 espesor de la celda )
 #k si es un valor pero se le podria meter una matriz 
 k=np.ones([10,N,N])
-k[1,:,:]=5e-3
+k[1,:,:]=5e-1
 npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
 
 # para poner la condicion de frontera 
@@ -140,7 +140,7 @@ x = y = np.linspace(0, L, N)
 y = y[::-1]
 fig = plt.figure(figsize=(6, 6))
 ax = fig.add_subplot(1, 1, 1, aspect="equal")
-c = ax.contour(x, y, h[-1], np.arange(90, 100.1, 0.2), colors="black")
+c = ax.contour(x, y, h[-5], np.arange(90, 100.1, 0.2), colors="black")
 plt.clabel(c, fmt="%1.1f")
 #en h0 esta laprimera capa y en h1 la ultima 
 
