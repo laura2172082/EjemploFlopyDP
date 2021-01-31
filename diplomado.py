@@ -21,13 +21,21 @@ k = 1.0
 #busca mf6 en la carpeta especificada y guarda los archivos 
 sim = flopy.mf6.MFSimulation(sim_name=name, exe_name="mf6", version="mf6", sim_ws="workspace")
  
-#crea ibjetos de flopy TDIS
+#crea ibjetos de flopy TDIS,la simulacion  
+#nper me estan diciendo que hay un solo periodo de estres (1 solo)
+#y la amplitud de ese periodo de estres ,el numero de time steps,y el factor multiplicador perioddata=[(1.0, 1, 1.0)
+#todo es uno,por que esto es sencillo 
 tdis = flopy.mf6.ModflowTdis(sim, pname="tdis", time_units="DAYS", nper=1, perioddata=[(1.0, 1, 1.0)])
 
-#crea el paquete de objetos flopy tms 
+#crea el paquete de objetos flopy IMS 
+#por ejemplo en modflow siempre esta todo calculado por paquetes  y en este caso para modflow 6 ,el solucionador es IMS 
+#entonces la estructura basica mostrada se sigue asi,dentro del parentesis en :
+#(sim simulacion con la que se trabaja,pname el nombre del paquete que es ims,y la complejidad)
 ims =flopy.mf6.ModflowIms(sim,pname="ims",complexity="SIMPLE")
 
 #crea el modelo del flujo de agua 
+#lo de la linea 38,quiere decir que eso se lleno con el nombre del ejercicio pero termina en .nam 
+#gwf modelo de agua subterranea,ahora si lo esta creando 
 model_nam_file = "{}.nam".format(name)
 gwf = flopy.mf6.ModflowGwf(sim, modelname=name, model_nam_file=model_nam_file)
 
