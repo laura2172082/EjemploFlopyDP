@@ -35,14 +35,20 @@ ims =flopy.mf6.ModflowIms(sim,pname="ims",complexity="SIMPLE")
 
 #crea el modelo del flujo de agua 
 #lo de la linea 38,quiere decir que eso se lleno con el nombre del ejercicio pero termina en .nam 
-#gwf modelo de agua subterranea,ahora si lo esta creando 
+#gwf ground water flow  modelo de agua subterranea,ahora si lo esta creando 
 model_nam_file = "{}.nam".format(name)
 gwf = flopy.mf6.ModflowGwf(sim, modelname=name, model_nam_file=model_nam_file)
 
-#se definen valores de espesor de filas y paquete de discretizacion
+#se definen valores de espesor de filas y paquete de discretizacion espacial 
+#bot sign¡nifica botton de fondo 
+#delrow  es el espesor de las filas 
+#dis es el paquete de discretizacion 
+#ahi estamos diciendo cual es el modelo,cuales son las capas 
+#en bot tenemos un np ,que es numpy y con un numpy hay un linspace que hace que va desde un valor minimo hasta un maximo en un numero especidicado de pasos 
+# el top esta en 0,por eso va de -H hasta el fondo total hasta el numero decapas que tenemos ,filas iguales a columnas osea con cuadradas
 bot = np.linspace(-H / Nlay, -H, Nlay)
-delrow = delcol = L / (N - 1)  #espesor de filas 
-dis = flopy.mf6.ModflowGwfdis(    #paquete de discretizacion
+delrow = delcol = L / (N - 1)  
+dis = flopy.mf6.ModflowGwfdis(    
     gwf,
     nlay=Nlay,
     nrow=N,
@@ -54,10 +60,16 @@ dis = flopy.mf6.ModflowGwfdis(    #paquete de discretizacion
 )
 
 #Entregar el valor de partida para el metodo de numerico
+#el punto de partida el que se define en start y ic se indica como initial condicions 
+#entonces esto trabaja con matrices 
 start = h1 * np.ones((Nlay, N, N))
 ic = flopy.mf6.ModflowGwfic(gwf, pname="ic", strt=start)  #condiciones iniciales 
 
 #paquete que controla el flujo entre celdas,el cual esta condicionado por la permeabilidad
+# npf not property flow 
+#entonces en esos parentesis (gwf ya definido antes,icelltype=1 significa que el tipo de celda es para calcular el espesor de la celda ,1 espesor de la celda )
+#k si es un valor pero se le podria meter una matriz 
+#
 npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
 
 # 
