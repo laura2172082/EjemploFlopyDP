@@ -156,6 +156,8 @@ ax = fig.add_subplot(1, 1, 1, aspect="auto")
 c = ax.contour(x, z, h[:, 50, :], np.arange(90, 100.1, 0.2), colors="black")
 plt.clabel(c, fmt="%1.1f")
 
+
+#grafico de flechasx3
 head = flopy.utils.HeadFile('workspace/ejercicio .hds').get_data()
 bud = flopy.utils.CellBudgetFile('workspace/ejercicio .bud', precision='double')
 spdis = bud.get_data(text='DATA-SPDIS')[0]
