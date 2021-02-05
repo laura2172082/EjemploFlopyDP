@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import flopy
+ws="workspace"
 #vamos a empezar hacer el modelo,este modelo tiene unas caracteristicas particulares y estan ahi expuestas al comienzo 
 # name es el nombre del modelo 
 #h1 y h2 son las cargas hidraulicas en los bordes
@@ -71,7 +72,7 @@ ic = flopy.mf6.ModflowGwfic(gwf, pname="ic", strt=start)  #condiciones iniciales
 #k si es un valor pero se le podria meter una matriz 
 k=np.ones([10,N,N])
 k[1,:,:]=5e-1
-npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
+npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True, save_specific_discharge =True)
 
 # para poner la condicion de frontera 
 #linea 1 esta creando una lista vacia y añade dentro de la lista una tupla con coordenadas:
@@ -80,6 +81,7 @@ npf = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
 chd_rec = []
 chd_rec.append(((0, int(N / 4), int(N / 4)), h2))
 chd_rec.append(((1, int(3*N / 4), int(3*N / 4)), h2-5))
+
 for layer in range(0, Nlay):
     for row_col in range(0, N):
         chd_rec.append(((layer, row_col, 0), h1))
@@ -94,6 +96,7 @@ chd = flopy.mf6.ModflowGwfchd(
     save_flows=True,
 )
 
+
 #
 iper = 0
 ra = chd.stress_period_data.get_data(key=iper)
@@ -104,7 +107,7 @@ ra
 #me va a decir que imprimir en la salida 
 headfile = "{}.hds".format(name)
 head_filerecord = [headfile]
-budgetfile = "{}.cbb".format(name)
+budgetfile = "{}.bud".format(name)
 budget_filerecord = [budgetfile]
 saverecord = [("HEAD", "ALL"), ("BUDGET", "ALL")]
 printrecord = [("HEAD", "LAST")]
@@ -124,6 +127,8 @@ if not success:
     raise Exception("MODFLOW 6 did not terminate normally.")
     
 #imprimiendo resultados 
+headfile= 'workspace' +'/'+headfile
+budgetfile= 'workspace' +'/'+budgetfile
 headfile=os.path.join("workspace",headfile)
 hds = flopy.utils.binaryfile.HeadFile(headfile)
 h = hds.get_data(kstpkper=(0, 0))
@@ -152,5 +157,14 @@ c = ax.contour(x, z, h[:, 50, :], np.arange(90, 100.1, 0.2), colors="black")
 plt.clabel(c, fmt="%1.1f")
 
 
-
+#grafico de flechasx3
+head = flopy.utils.HeadFile('workspace/ejercicio .hds').get_data()
+bud = flopy.utils.CellBudgetFile('workspace/ejercicio .bud', precision='double')
+spdis = bud.get_data(text='DATA-SPDIS')[0]
+fig=plt.figure(figsize=(30,30))
+pmv=flopy.plot.PlotMapView(gwf)
+pmv.plot_array(head)
+pmv.plot_grid(colors='white')
+pmv.contour_array(head, levels=[.2, .4, .6, .8], linewidths=3.)
+pmv.plot_specific_discharge(spdis, color='red')
 
